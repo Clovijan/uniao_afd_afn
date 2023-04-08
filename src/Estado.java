@@ -1,10 +1,20 @@
 public class Estado {
 
+    private int id;
+
     private String nome;
 
     private boolean inicial;
 
     private boolean estadoFinal;
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getNome() {
         return this.nome;
