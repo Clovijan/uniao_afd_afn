@@ -9,6 +9,8 @@ public class App {
         for (Estado estado : automato.getEstados()) {
             System.out.println("ID Estado:" + estado.getId());
             System.out.println("Nome Estado:" + estado.getNome());
+            System.out.println("Estado Inicial:" + estado.IsInicial());
+            System.out.println("Estado Final:" + estado.IsFinal());
         }
     }
 }

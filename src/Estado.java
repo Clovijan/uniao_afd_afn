@@ -11,6 +11,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Estado {
 
@@ -34,21 +35,32 @@ public class Estado {
             doc.getDocumentElement().normalize();
 
             NodeList listaEstados = doc.getElementsByTagName("state");
-
             for (int i = 0; i < listaEstados.getLength(); i++) {
+
                 Node nEstado = listaEstados.item(i);
+                NodeList nFilhos = nEstado.getChildNodes();
+
                 if (nEstado.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElemento = (Element) nEstado;
 
                     Estado estado = new Estado();
                     estado.setId(Integer.parseInt(eElemento.getAttribute("id")));
                     estado.setNome(eElemento.getAttribute("name"));
-                    estado.setInicial(Boolean.parseBoolean(eElemento.getAttribute("initial")));
-                    estado.SetFinal(Boolean.parseBoolean(eElemento.getAttribute("final")));
+
+                    for (int j = 0; j < nFilhos.getLength(); j++) {
+                        Node nFilho = nFilhos.item(j);
+
+                        if (nFilho.getNodeType() == Node.ELEMENT_NODE) {
+                            if (Objects.equals("initial", nFilho.getNodeName()))
+                                estado.setInicial(true);
+
+                            if (Objects.equals("final", nFilho.getNodeName()))
+                                estado.SetFinal(true);
+                        }
+                    }
 
                     estados.add(estado);
                 }
-
             }
 
         } catch (Exception e) {
