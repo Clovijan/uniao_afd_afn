@@ -1,24 +1,24 @@
 public class Transicao {
 
-    private Estado origem;
+    private int origem; // from
 
-    private Estado destino;
+    private int destino; // to
 
-    private String simbolo;
+    private String simbolo; // read
 
-    public Estado getOrigem() {
+    public int getOrigem() {
         return this.origem;
     }
 
-    public void setOrigem(Estado origem) {
+    public void setOrigem(int origem) {
         this.origem = origem;
     }
 
-    public Estado getDestino() {
+    public int getDestino() {
         return this.destino;
     }
 
-    public void setDestino(Estado destino) {
+    public void setDestino(int destino) {
         this.destino = destino;
     }
 
