@@ -10,6 +10,14 @@ public class Automato {
 
     private List<Estado> estadosFinais;
 
+    public void carregaDados(String pathArquivo) {
+
+        Estado estados = new Estado();
+
+        this.estados = estados.recuperaEstados(pathArquivo);
+
+    }
+
     public List<Estado> getEstados() {
         return this.estados;
     }
