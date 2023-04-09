@@ -1,0 +1,6 @@
+# Ignora todos os arquivos resultado de compilação dos arquivos Java
+*.class
+
+# Ignora o diretório dos binários
+bin/
+
