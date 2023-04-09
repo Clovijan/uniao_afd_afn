@@ -1,5 +1,6 @@
 public class App {
     public static void main(String[] args) throws Exception {
+        // Teste de recuperação de dados
 
         Automato automato = new Automato();
         automato.carregaDados("C:/Users/Clovjan Rocha/Downloads/Teste.jff");
@@ -10,5 +11,13 @@ public class App {
             System.out.println("Estado Inicial:" + estado.IsInicial());
             System.out.println("Estado Final:" + estado.IsFinal());
         }
+
+        for (Transicao transicao : automato.getTransicoes()) {
+            System.out.println("Trasicao Origem: " + transicao.getOrigem());
+            System.out.println("Trasicao Destino: " + transicao.getDestino());
+            System.out.println("Com Símbolo: " + transicao.getSimbolo());
+        }
+
+        System.out.println("ID estado Inicial: " + automato.getEstadoInicial().getId());
     }
 }
