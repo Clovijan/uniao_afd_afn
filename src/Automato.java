@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class Automato {
@@ -8,13 +9,27 @@ public class Automato {
 
     private Estado estadoInicial;
 
-    private List<Estado> estadosFinais;
+    private List<Estado> estadosFinais = new ArrayList<Estado>();
 
+    /**
+     * Popula os dados do automato setando estados, transicoes.
+     * 
+     * @param pathArquivo
+     */
     public void carregaDados(String pathArquivo) {
 
         Estado estados = new Estado();
+        Transicao trasicoes = new Transicao();
 
         this.estados = estados.recuperaEstados(pathArquivo);
+        this.transicoes = trasicoes.recuperaTransicoes(pathArquivo);
+
+        for (Estado estado : this.estados) {
+            if (estado.IsInicial())
+                this.estadoInicial = estado;
+            if (estado.IsFinal())
+                this.estadosFinais.add(estado);
+        }
 
     }
 

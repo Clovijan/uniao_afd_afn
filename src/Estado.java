@@ -58,7 +58,6 @@ public class Estado {
                                 estado.SetFinal(true);
                         }
                     }
-
                     estados.add(estado);
                 }
             }
