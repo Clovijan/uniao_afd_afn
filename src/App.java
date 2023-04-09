@@ -5,6 +5,11 @@ public class App {
         Automato automato = new Automato();
         automato.carregaDados("C:/Users/Clovjan Rocha/Downloads/Teste.jff");
 
+        impressaoAutomato(automato);
+    }
+
+    private static void impressaoAutomato(Automato automato) {
+
         for (Estado estado : automato.getEstados()) {
             System.out.println("ID Estado:" + estado.getId());
             System.out.println("Nome Estado:" + estado.getNome());
