@@ -45,15 +45,34 @@ public class Automato {
         automatoFinal.setEstadoInicial(novoEstado);
         automatoFinal.getEstados().add(novoEstado);
 
-        // renomeando os estados do automato 1 e adicionando no automato final
-        for (int i = 0; i < automato1.getEstados().size(); i++) {
+        // renomeando os estados do automato 1
+        automatoFinal.getEstados().addAll(renomeaEstados(automato1, 1));
 
-            novoEstado.setId(i + 1);
-            novoEstado.setNome("q" + novoEstado.getId() + "_1");
-            automatoFinal.getEstados().add(novoEstado);
+        for (int j = 0; j < automato1.getTransicoes().size(); j++) {
+
         }
 
         return automatoFinal;
+    }
+
+    /**
+     * 
+     * @param automato
+     * @param indiceAutomato indica se é o automato 1 ou o 2
+     * @return
+     */
+    public List<Estado> renomeaEstados(Automato automato, int indiceAutomato) {
+
+        List<Estado> novosEstados = new ArrayList<Estado>();
+        Estado novoEstado = new Estado();
+        // renomeando os estados do automato 1 e adicionando no automato final
+        for (int i = 0; i < automato.getEstados().size(); i++) {
+            novoEstado.setId(i + 1);
+            novoEstado.setNome("q" + novoEstado.getId() + "_" + indiceAutomato);
+            novosEstados.add(novoEstado);
+        }
+
+        return novosEstados;
     }
 
     public List<Estado> getEstados() {
