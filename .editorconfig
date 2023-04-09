@@ -1,0 +1,19 @@
+# EditorConfig raiz
+root = true
+
+# Configurações para todos os arquivos
+[*]
+charset = utf-8
+end_of_line = lr
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Indentação de 4 colunas para os arquivos java
+[*.java]
+indent_size = 4
+
+# Indentação de 2 colunas para os arquivos xml ou jff
+[*.{xml,jff}]
+indent_size = 2
+
