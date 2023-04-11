@@ -1,62 +1,55 @@
+import java.io.File;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Automato {
-
     private List<Estado> estados;
-
     private List<Transicao> transicoes;
 
-    private Estado estadoInicial;
 
-    private List<Estado> estadosFinais = new ArrayList<Estado>();
+    Automato() {
+        this.estados = new ArrayList<Estado>();
+        this.transicoes = new ArrayList<Transicao>();
+    }
 
     /**
      * Popula os dados do automato setando estados, transicoes.
-     * 
+     *
      * @param pathArquivo
      */
     public void carregaDados(String pathArquivo) {
-
-        Estado estados = new Estado();
-        Transicao trasicoes = new Transicao();
-
-        this.estados = estados.recuperaEstados(pathArquivo);
-        this.transicoes = trasicoes.recuperaTransicoes(pathArquivo);
-
-        for (Estado estado : this.estados) {
-            if (estado.IsInicial())
-                this.estadoInicial = estado;
-            if (estado.IsFinal())
-                this.estadosFinais.add(estado);
+        try {
+            SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+            parser.parse(new File(pathArquivo), new AutomatoHandler(this));
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
-
     }
 
     public Automato uniaoAFN(Automato automato1, Automato automato2) {
         Automato automatoFinal = new Automato();
 
         // criando novo estado incial e setando no automato final
-        Estado novoEstado = new Estado();
-        novoEstado.setNome("q0");
-        novoEstado.setId(0);
+        Estado novoEstado = new Estado("q0", 0);
         novoEstado.setInicial(true);
-        novoEstado.SetFinal(false);
-        automatoFinal.setEstadoInicial(novoEstado);
-        automatoFinal.getEstados().add(novoEstado);
+        novoEstado.setFinal(false);
+        automatoFinal.addEstado(novoEstado);
 
         // renomeando os estados do automato 1
         automatoFinal.getEstados().addAll(renomeaEstados(automato1, 1));
 
         for (int j = 0; j < automato1.getTransicoes().size(); j++) {
-
+            // TODO: fazer as transicoes
         }
 
         return automatoFinal;
     }
 
     /**
-     * 
+     *
      * @param automato
      * @param indiceAutomato indica se é o automato 1 ou o 2
      * @return
@@ -64,7 +57,8 @@ public class Automato {
     public List<Estado> renomeaEstados(Automato automato, int indiceAutomato) {
 
         List<Estado> novosEstados = new ArrayList<Estado>();
-        Estado novoEstado = new Estado();
+        Estado novoEstado = new Estado("", 0); // Um estado "vazio"
+
         // renomeando os estados do automato 1 e adicionando no automato final
         for (int i = 0; i < automato.getEstados().size(); i++) {
             novoEstado.setId(i + 1);
@@ -79,31 +73,34 @@ public class Automato {
         return this.estados;
     }
 
-    public void setEstados(List<Estado> estados) {
-        this.estados = estados;
+    public void addEstado(Estado estado) {
+        this.estados.add(estado);
     }
 
     public List<Transicao> getTransicoes() {
         return this.transicoes;
     }
 
-    public void setTransicoes(List<Transicao> transicoes) {
-        this.transicoes = transicoes;
+    public void addTransicao(Transicao transicao) {
+        this.transicoes.add(transicao);
     }
 
     public Estado getEstadoInicial() {
-        return this.estadoInicial;
-    }
+        for (Estado estado : this.estados)
+            if (estado.isInicial())
+                return estado;
 
-    public void setEstadoInicial(Estado estadoInicial) {
-        this.estadoInicial = estadoInicial;
+        return null;
     }
 
     public List<Estado> getEstadosFinais() {
-        return this.estadosFinais;
-    }
+        List<Estado> estados = new ArrayList<Estado>();
 
-    public void setEstadosFinais(List<Estado> estadosFinais) {
-        this.estadosFinais = estadosFinais;
+        for (Estado estado : this.estados)
+            if (estado.isInicial())
+                estados.add(estado);
+
+        return estados;
     }
 }
+
