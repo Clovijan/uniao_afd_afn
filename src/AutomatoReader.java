@@ -2,7 +2,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class AutomatoHandler extends DefaultHandler {
+public class AutomatoReader extends DefaultHandler {
     private Automato automato;
     private Estado estado;
     private Transicao transicao;
@@ -11,7 +11,7 @@ public class AutomatoHandler extends DefaultHandler {
     private boolean lendoTo;
     private boolean lendoRead;
 
-    AutomatoHandler(Automato automato) {
+    AutomatoReader(Automato automato) {
         this.automato = automato;
     }
 
@@ -60,16 +60,27 @@ public class AutomatoHandler extends DefaultHandler {
                            int length) throws SAXException {
         String valor = new String(ch, start, length);
 
-        if (this.lendoRead)
-            this.transicao.setSimbolo(valor);
-        else if (this.lendoTo)
-            this.transicao.setDestino(Integer.parseInt(valor));
-        else if (this.lendoFrom)
-            this.transicao.setOrigem(Integer.parseInt(valor));
+        // Ignora toda ocorrência de caractéres em branco para garantir que as
+        // transições vazias realmente sejam vazias.
+        if (valor.isBlank())
+            return;
 
-        this.lendoFrom = false;
-        this.lendoTo = false;
-        this.lendoRead = false;
+        if (this.lendoFrom) {
+            this.transicao.setOrigem(Integer.parseInt(valor));
+            this.lendoFrom = false;
+        } else if (this.lendoTo) {
+            this.transicao.setDestino(Integer.parseInt(valor));
+            this.lendoTo = false;
+        } else if (this.lendoRead) {
+            // Quando ocorre uma transição lambda esse if nunca
+            // vai ocorrer fazendo o símbolo ser "". Isso
+            // acontece porque a tag <read> está vazia então
+            // essa função não será chamada para ler os
+            // caractéres entre as tags de abertura e
+            // fechamento.
+            this.transicao.setSimbolo(valor);
+            this.lendoRead = false;
+        }
     }
 
     @Override

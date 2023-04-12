@@ -23,7 +23,7 @@ public class Automato {
     public void carregaDados(String pathArquivo) {
         try {
             SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-            parser.parse(new File(pathArquivo), new AutomatoHandler(this));
+            parser.parse(new File(pathArquivo), new AutomatoReader(this));
         } catch (Exception exception) {
             exception.printStackTrace();
         }
