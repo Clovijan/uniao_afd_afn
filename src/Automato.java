@@ -44,16 +44,19 @@ public class Automato {
         novoEstado.setFinal(false);
         automatoFinal.addEstado(novoEstado);
 
-        // Criando o estado final
+        // Criando o estado final e setando no automato final
         int idEstadoFinal = automato1.getEstados().size() + automato2.getEstados().size() + 1;
         novoEstado = new Estado("q" + idEstadoFinal, idEstadoFinal);
         novoEstado.setInicial(false);
         novoEstado.setFinal(true);
         automatoFinal.addEstado(novoEstado);
 
-        // Gerando transicao do novo estado inicial criado para os antigos inicias do
+        // Gerando transicao do novo estado inicial criado, para os antigos inicias do
         // automatos originais
         automatoFinal.addAllTransicao(geraTransicoesNovoEstadoInicial(automato1, automato2));
+
+        // Gerando transicao dos antigos finais para o novo estado final criado
+        automatoFinal.addAllTransicao(geraTrancisoesNovoEstadoFinal(automato1, automato2));
 
         // renomeia e adiciona os estados no automato final
         automatoFinal.addAllEstado(renomeiaEstados(automato1, automato2));
@@ -132,6 +135,32 @@ public class Automato {
         novaTransicao.setDestino(automato2.getEstadoInicial().getId() + 1 + automato1.getEstados().size());
         novaTransicao.setSimbolo("");
         novasTransicoes.add(novaTransicao);
+
+        return novasTransicoes;
+    }
+
+    private List<Transicao> geraTrancisoesNovoEstadoFinal(Automato automato1, Automato automato2) {
+        List<Transicao> novasTransicoes = new ArrayList<Transicao>();
+        Transicao novaTransicao = new Transicao();
+        int idEstadoFinal = automato1.getEstados().size() + automato2.getEstados().size() + 1;
+
+        for (Estado estado : automato1.getEstadosFinais()) {
+            novaTransicao = new Transicao();
+            novaTransicao.setOrigem(estado.getId() + 1);
+            novaTransicao.setDestino(idEstadoFinal);
+            novaTransicao.setSimbolo("");
+
+            novasTransicoes.add(novaTransicao);
+        }
+
+        for (Estado estado : automato2.getEstadosFinais()) {
+            novaTransicao = new Transicao();
+            novaTransicao.setOrigem(estado.getId() + 1 + automato2.getEstados().size());
+            novaTransicao.setDestino(idEstadoFinal);
+            novaTransicao.setSimbolo("");
+
+            novasTransicoes.add(novaTransicao);
+        }
 
         return novasTransicoes;
     }
