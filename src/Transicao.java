@@ -2,7 +2,9 @@ public class Transicao {
     private int origem; // from
     private int destino; // to
 
-    private String simbolo; // read
+    // Quando "" representa uma transição
+    // vazia, ou seja, uma transição lambda.
+    private String simbolo = ""; // read
 
     public int getOrigem() {
         return this.origem;
