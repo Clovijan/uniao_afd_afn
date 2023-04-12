@@ -4,7 +4,6 @@ public class Transicao {
 
     private String simbolo; // read
 
-
     public int getOrigem() {
         return this.origem;
     }
@@ -29,4 +28,3 @@ public class Transicao {
         this.simbolo = simbolo;
     }
 }
-
