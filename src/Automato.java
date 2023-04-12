@@ -77,12 +77,14 @@ public class Automato {
         Estado novoEstado = new Estado(null, 0);
 
         for (Estado estado : automato1.getEstados()) {
+            novoEstado = new Estado(null, 0);
             novoEstado.setId(estado.getId() + 1);
             novoEstado.setNome("q" + (estado.getId() + 1) + "_1"); // o nº 1 significa que é do automato 1
             listaEstados.add(novoEstado);
         }
 
         for (Estado estado : automato2.getEstados()) {
+            novoEstado = new Estado(null, 0);
             int idNovoEstado = estado.getId() + automato1.getEstados().size() + 1;
             novoEstado.setId(idNovoEstado);
             novoEstado.setNome("q" + idNovoEstado + "_2"); // o nº 1 significa que é do automato 2
@@ -97,6 +99,7 @@ public class Automato {
         Transicao novaTransicao = new Transicao();
 
         for (Transicao transicao : automato1.getTransicoes()) {
+            novaTransicao = new Transicao();
             novaTransicao.setOrigem(transicao.getOrigem() + 1);
             novaTransicao.setDestino(transicao.getDestino() + 1);
             novaTransicao.setSimbolo(transicao.getSimbolo());
@@ -104,6 +107,7 @@ public class Automato {
         }
 
         for (Transicao transicao : automato2.getTransicoes()) {
+            novaTransicao = new Transicao();
             novaTransicao.setOrigem(transicao.getOrigem() + 1 + automato2.getEstados().size());
             novaTransicao.setDestino(transicao.getDestino() + 1 + automato2.getEstados().size());
             novaTransicao.setSimbolo(transicao.getSimbolo());
@@ -131,6 +135,7 @@ public class Automato {
         novasTransicoes.add(novaTransicao);
 
         // gerando para o automato 2
+        novaTransicao = new Transicao();
         novaTransicao.setOrigem(0);
         novaTransicao.setDestino(automato2.getEstadoInicial().getId() + 1 + automato1.getEstados().size());
         novaTransicao.setSimbolo("");
@@ -201,7 +206,7 @@ public class Automato {
         List<Estado> estados = new ArrayList<Estado>();
 
         for (Estado estado : this.estados)
-            if (estado.isInicial())
+            if (estado.isFinal())
                 estados.add(estado);
 
         return estados;
