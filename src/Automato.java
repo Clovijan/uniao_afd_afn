@@ -173,7 +173,10 @@ public class Automato {
     public boolean isCompletAutomata(){
         //Passo 1: descobri o alfabeto do automato
         String alphabet = getAlphabet();
+
         //Passo 2: pegar o ID de cada estado
+        int[] idDoEstado = pegarIdsDosEstados();
+        
         // Passo 3: verifica todas as transições de cada estado. É importante ressaltar
         //          que cada transição possui um ID referente ao estado ao qual está associada.
         //          Se ele não possui transição com determinado símbolo, então cria-se um
@@ -183,6 +186,16 @@ public class Automato {
         
 
         return true;
+    }
+
+    private int[] pegarIdsDosEstados() {
+        int[] idDoEstado = new int[estados.size()];
+        int i = 0;
+        for(Estado estado : estados){
+            idDoEstado[i] = estado.getId();
+        }
+
+        return idDoEstado;
     }
 
     /**
