@@ -17,7 +17,13 @@ public class App {
         System.out.println("\nAlfabeto: ");
         String[] alfabeto = automato.getAlphabet();
         for(int i = 0; i < alfabeto.length; i++) {
-            System.out.println(i + "º: " + alfabeto[i]);
+            System.out.println((i + 1) + "º: " + alfabeto[i]);
+        }
+
+        if (automato.isCompletAutomata()) {
+            System.out.println("O autômato é completo!!");
+        } else {
+            System.out.println("O autômato não é completo!!");
         }
     }
 
