@@ -3,9 +3,16 @@ public class App {
         // Teste de recuperação de dados
 
         Automato automato = new Automato();
-        automato.carregaDados("TesteAFD.jff");
+        Automato automato2 = new Automato();
 
+        automato.carregaDados("TesteAFD.jff");
+        automato2.carregaDados("TesteAFD.jff");
+
+        System.out.println("automato");
         impressaoAutomato(automato);
+
+        System.out.println("\nUnião dos dois autômatos: ");
+        impressaoAutomato(automato.uniaoAFN(automato, automato2));
     }
 
     private static void impressaoAutomato(Automato automato) {
@@ -28,5 +35,6 @@ public class App {
         }
 
         System.out.println("ID estado Inicial: " + automato.getEstadoInicial().getId());
+
     }
 }
