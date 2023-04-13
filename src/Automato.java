@@ -180,11 +180,43 @@ public class Automato {
         // Passo 3: verifica todas as transições de cada estado. É importante ressaltar
         //          que cada transição possui um ID referente ao estado ao qual está associada.
         //          Se ele não possui transição com determinado símbolo, então cria-se um
-        //          estado para recebe tal transição. 
+        //          estado para recebe tal transição.
 
+        // Cada posição do vetor abaixo está associado a um símbolo do alfabeto
+        int[] totalDeTransicoes = new int[alphabet.length()]; 
+        int numeroDeTransicoesDiferentes = 0;
 
-        
+        for(int i = 0; i < idDoEstado.length; i++) {
 
+            for(Transicao transicao : transicoes) {
+                if(idDoEstado[i] == transicao.getOrigem()){
+                    for(int x = 0; x < alphabet.length(); x++){
+                        //Se o símbolo da transição for igual ao símbolo do alfabeto
+                        if( transicao.getSimbolo().equals(alphabet.charAt(x))){
+                            totalDeTransicoes[x] += 1;
+                            numeroDeTransicoesDiferentes += 1;
+                        }
+                    }
+                }
+            }
+
+            
+            boolean apenasUmaTransicaoParaCadaSimbolo = true;
+            for(int x = 0; x < alphabet.length(); x++){
+                if(apenasUmaTransicaoParaCadaSimbolo && totalDeTransicoes[x] > 1){
+                    return false;
+                }
+            }
+
+            /*if(apenasUmaTransicaoParaCadaSimbolo){
+                for(int x = 0; x < alphabet.length(); x++){
+                    if(totalDeTransicoes[x] > 1){
+
+                    }
+                }
+            }*/
+
+        }
         return true;
     }
 
