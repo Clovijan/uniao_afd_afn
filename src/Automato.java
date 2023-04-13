@@ -172,7 +172,7 @@ public class Automato {
 
     public boolean isCompletAutomata(){
         //Passo 1: descobri o alfabeto do automato
-
+        String alphabet = getAlphabet();
         //Passo 2: pegar o ID de cada estado
         // Passo 3: verifica todas as transições de cada estado. É importante ressaltar
         //          que cada transição possui um ID referente ao estado ao qual está associada.
@@ -185,8 +185,37 @@ public class Automato {
         return true;
     }
 
-    private String[] getAlphabet(){
+    /**
+     * 
+     * @return uma string com os símbolos do alfabeto do autômato
+     */
+    private String getAlphabet(){
+        StringBuilder union = new StringBuilder();
+
+        // Concatena os símbolos de todas as transições 
+        for(Transicao transition : transicoes){
+            union.append(transition.getSimbolo());
+        }
+
+        char symbol;
+        StringBuilder copyOfUnion = new StringBuilder(union);
+        // Verificar e apaga símbolos repetidos
+        for(int i = 0; i < union.length() + 1; i++){
+            symbol = union.charAt(i);
+
+            for(int x = i + 1; x < union.length() + 1; x++){
+                if(symbol == union.charAt(x)){
+                    copyOfUnion.deleteCharAt(x);
+                }
+            }
+
+            union = copyOfUnion;
+        }
+
+        String alphabet = union.toString();
         
+
+        return alphabet;
     }
 
     public List<Estado> getEstados() {
