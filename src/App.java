@@ -13,6 +13,12 @@ public class App {
 
         System.out.println("\nUnião dos dois autômatos: ");
         impressaoAutomato(automato.uniaoAFN(automato, automato2));
+
+        System.out.println("\nAlfabeto: ");
+        String[] alfabeto = automato.getAlphabet();
+        for(int i = 0; i < alfabeto.length; i++) {
+            System.out.println(i + "º: " + alfabeto[i]);
+        }
     }
 
     private static void impressaoAutomato(Automato automato) {
@@ -36,5 +42,10 @@ public class App {
 
         System.out.println("ID estado Inicial: " + automato.getEstadoInicial().getId());
 
+        /*if(automato.isCompletAutomata()){
+            System.out.println("O autômato é completo!!");
+        }else{
+            System.out.println("O autômato não é completo!!"); 
+        }*/
     }
 }

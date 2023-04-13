@@ -184,26 +184,31 @@ public class Automato {
 
         // Cada posição do vetor abaixo está associado a um símbolo do alfabeto
         int[] totalDeTransicoes = new int[alphabet.length()]; 
-        int numeroDeTransicoesDiferentes = 0;
+        //int numeroDeTransicoesDiferentes = 0;
 
+        //Seleciona o estado um por um
         for(int i = 0; i < idDoEstado.length; i++) {
 
+            //Verifica todas as transições
             for(Transicao transicao : transicoes) {
+                //Seleciona as transições correspondente ao estado 
                 if(idDoEstado[i] == transicao.getOrigem()){
+                    //Seleciona os símbolos do estado um por um
                     for(int x = 0; x < alphabet.length(); x++){
                         //Se o símbolo da transição for igual ao símbolo do alfabeto
-                        if( transicao.getSimbolo().equals(alphabet.charAt(x))){
+                        if( transicao.getSimbolo().equals(String.valueOf(alphabet.charAt(x)))){
+                            //Cada posição do vetor abaixo corresponde a um símbolo do alfabeto
                             totalDeTransicoes[x] += 1;
-                            numeroDeTransicoesDiferentes += 1;
+                            //numeroDeTransicoesDiferentes += 1;
                         }
                     }
                 }
             }
 
-            
-            boolean apenasUmaTransicaoParaCadaSimbolo = true;
+            //boolean apenasUmaTransicaoParaCadaSimbolo = true;
             for(int x = 0; x < alphabet.length(); x++){
-                if(apenasUmaTransicaoParaCadaSimbolo && totalDeTransicoes[x] > 1){
+                //if(apenasUmaTransicaoParaCadaSimbolo && totalDeTransicoes[x] > 1){
+                if (totalDeTransicoes[x] > 1) {
                     return false;
                 }
             }
@@ -234,33 +239,49 @@ public class Automato {
      * 
      * @return uma string com os símbolos do alfabeto do autômato
      */
-    private String getAlphabet(){
-        StringBuilder union = new StringBuilder();
+    public String[] getAlphabet(){
+        String[] symbols = new String[transicoes.size()];
 
+        int y = 0;
         // Concatena os símbolos de todas as transições 
         for(Transicao transition : transicoes){
-            union.append(transition.getSimbolo());
+            symbols[y] = transition.getSimbolo();
+            y++;
         }
 
-        char symbol;
-        StringBuilder copyOfUnion = new StringBuilder(union);
+        /*String symbol;
+        String[] copyOfSymbols = new String[symbols.length];
+        for(int i = 0; i < symbols.length; i++){
+
+        }*/
+
+        String symbol;
+        int numeroDeSimbolos = 0;
         // Verificar e apaga símbolos repetidos
-        for(int i = 0; i < union.length() + 1; i++){
-            symbol = union.charAt(i);
+        for(int i = 0; i < symbols.length; i++){
+            symbol = symbols[i];
 
-            for(int x = i + 1; x < union.length() + 1; x++){
-                if(symbol == union.charAt(x)){
-                    copyOfUnion.deleteCharAt(x);
+            if(!symbol.equals(" ")){
+                for(int x = i + 1; x < symbols.length; x++){
+                    if(symbol.compareTo(symbols[x]) == 0){
+                        symbols[x] = " ";
+                    }
                 }
-            }
 
-            union = copyOfUnion;
+                ++numeroDeSimbolos;
+            }   
         }
 
-        String alphabet = union.toString();
+        String[] alfabeto = new String[numeroDeSimbolos]; 
+        int x = 0;
+        for(int i = 0; i < symbols.length; i++){
+            if(!symbols[x].equals(" ")){
+                alfabeto[x] = symbols[x];
+                ++x;
+            }
+        }
         
-
-        return alphabet;
+        return alfabeto;
     }
 
     public List<Estado> getEstados() {
