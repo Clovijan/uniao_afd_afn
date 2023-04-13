@@ -30,4 +30,3 @@ public class Transicao {
         this.simbolo = simbolo;
     }
 }
-
