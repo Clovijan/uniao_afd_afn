@@ -9,7 +9,6 @@ public class Automato {
     private List<Estado> estados;
     private List<Transicao> transicoes;
 
-
     Automato() {
         this.estados = new ArrayList<Estado>();
         this.transicoes = new ArrayList<Transicao>();
@@ -29,44 +28,70 @@ public class Automato {
         }
     }
 
-    public Automato uniaoAFN(Automato automato1, Automato automato2) {
+    public Automato uniaoAFD(Automato automato1, Automato automato2) {
         Automato automatoFinal = new Automato();
 
-        // criando novo estado incial e setando no automato final
-        Estado novoEstado = new Estado("q0", 0);
-        novoEstado.setInicial(true);
-        novoEstado.setFinal(false);
-        automatoFinal.addEstado(novoEstado);
+        // criando o produto cartesiano entre os estados dos automatos originais
+        for (Estado estado1 : automato1.getEstados()) {
+            for (Estado estado2 : automato2.getEstados()) {
+                Estado novoEstado = new Estado((estado1.getNome() + "_" + estado2.getNome()),
+                        (estado1.getId() * automato2.getEstados().size() + estado2.getId()));
+                novoEstado.setInicial(estado1.isInicial() && estado2.isInicial() ? true : false);
+                novoEstado.setFinal(estado1.isFinal() || estado2.isFinal() ? true : false);
+                automatoFinal.addEstado(novoEstado);
+            }
+        }
 
-        // renomeando os estados do automato 1
-        automatoFinal.getEstados().addAll(renomeaEstados(automato1, 1));
+        // criando as transições com os novos estados criados
+        for (Estado estado1 : automato1.getEstados()) {
+            for (Estado estado2 : automato2.getEstados()) {
+                for (String simbolo : getAlfabeto(automato1, automato2)) {
+                    Transicao novaTransicao = new Transicao();
+                    int transicaoOrigem = estado1.getId() * automato2.getEstados().size() + estado2.getId();
+                    int idEstado1 = getIdEstadoBySimbolo(estado1, simbolo, automato1.getTransicoes());
+                    int idEstado2 = getIdEstadoBySimbolo(estado2, simbolo, automato2.getTransicoes());
+                    int transicaoDestino = idEstado1 * automato2.getEstados().size() + idEstado2;
 
-        for (int j = 0; j < automato1.getTransicoes().size(); j++) {
-            // TODO: fazer as transicoes
+                    novaTransicao.setOrigem(transicaoOrigem);
+                    novaTransicao.setDestino(transicaoDestino);
+                    novaTransicao.setSimbolo(simbolo);
+                    automatoFinal.addTransicao(novaTransicao);
+                }
+            }
         }
 
         return automatoFinal;
     }
 
-    /**
-     *
-     * @param automato
-     * @param indiceAutomato indica se é o automato 1 ou o 2
-     * @return
-     */
-    public List<Estado> renomeaEstados(Automato automato, int indiceAutomato) {
-
-        List<Estado> novosEstados = new ArrayList<Estado>();
-        Estado novoEstado = new Estado("", 0); // Um estado "vazio"
-
-        // renomeando os estados do automato 1 e adicionando no automato final
-        for (int i = 0; i < automato.getEstados().size(); i++) {
-            novoEstado.setId(i + 1);
-            novoEstado.setNome("q" + novoEstado.getId() + "_" + indiceAutomato);
-            novosEstados.add(novoEstado);
+    private int getIdEstadoBySimbolo(Estado estado, String simbolo, List<Transicao> trasicoesAutomato) {
+        for (Transicao transicao : trasicoesAutomato) {
+            if (transicao.getOrigem() == estado.getId() && transicao.getSimbolo().equals(simbolo))
+                return transicao.getDestino();
         }
+        return -1;
+    }
 
-        return novosEstados;
+    /**
+     * Recupera o alfabeto do automato
+     * 
+     * @param automato1
+     * @param automato2
+     *
+     */
+    private List<String> getAlfabeto(Automato automato1, Automato automato2) {
+        List<String> alfabeto = new ArrayList<String>();
+
+        for (Transicao transicao : automato1.getTransicoes()) {
+            if (!alfabeto.contains(transicao.getSimbolo())) {
+                alfabeto.add(transicao.getSimbolo());
+            }
+        }
+        for (Transicao transicao : automato2.getTransicoes()) {
+            if (!alfabeto.contains(transicao.getSimbolo())) {
+                alfabeto.add(transicao.getSimbolo());
+            }
+        }
+        return alfabeto;
     }
 
     public List<Estado> getEstados() {
@@ -75,6 +100,10 @@ public class Automato {
 
     public void addEstado(Estado estado) {
         this.estados.add(estado);
+    }
+
+    public void addAllEstados(List<Estado> estados) {
+        this.estados.addAll(estados);
     }
 
     public List<Transicao> getTransicoes() {
@@ -103,4 +132,3 @@ public class Automato {
         return estados;
     }
 }
-
