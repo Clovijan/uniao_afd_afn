@@ -95,6 +95,22 @@ public class Automato {
     }
 
     /**
+     * Recupera o alfabeto do automato
+     *
+     */
+    public List<String> getAlfabeto() {
+        List<String> alfabeto = new ArrayList<String>();
+
+        for (Transicao transicao : transicoes) {
+            if (!alfabeto.contains(transicao.getSimbolo())) {
+                alfabeto.add(transicao.getSimbolo());
+            }
+        }
+        
+        return alfabeto;
+    }
+
+    /**
      * Realiza a União de 2 automatos Finitos não deterministicos
      *
      * @param automato1
@@ -125,39 +141,10 @@ public class Automato {
         automatoFinal.addAllTransicao(geraTrancisoesNovoEstadoFinal(automato1, automato2));
 
         // renomeia e adiciona os estados no automato final
-        automatoFinal.addAllEstado(renomeiaEstados(automato1, automato2));
+        automatoFinal.addAllEstados(renomeiaEstados(automato1, automato2));
         automatoFinal.addAllTransicao(reorganizarTransicoes(automato1, automato2));
 
         return automatoFinal;
-    }
-
-    /**
-     * Renomeia os estados dos automatos originais
-     *
-     * @param automato1
-     * @param automato2
-     * @return
-     */
-    private List<Estado> renomeiaEstados(Automato automato1, Automato automato2) {
-        List<Estado> listaEstados = new ArrayList<Estado>();
-        Estado novoEstado = new Estado(null, 0);
-
-        for (Estado estado : automato1.getEstados()) {
-            novoEstado = new Estado(null, 0);
-            novoEstado.setId(estado.getId() + 1);
-            novoEstado.setNome("q" + (estado.getId() + 1) + "_1"); // o nº 1 significa que é do automato 1
-            listaEstados.add(novoEstado);
-        }
-
-        for (Estado estado : automato2.getEstados()) {
-            novoEstado = new Estado(null, 0);
-            int idNovoEstado = estado.getId() + automato1.getEstados().size() + 1;
-            novoEstado.setId(idNovoEstado);
-            novoEstado.setNome("q" + idNovoEstado + "_2"); // o nº 1 significa que é do automato 2
-            listaEstados.add(novoEstado);
-        }
-
-        return listaEstados;
     }
 
     private List<Transicao> reorganizarTransicoes(Automato automato1, Automato automato2) {
@@ -210,28 +197,6 @@ public class Automato {
         }
 
         return listaEstados;
-    }
-
-    private List<Transicao> reorganizarTransicoes(Automato automato1, Automato automato2) {
-        List<Transicao> listaTransicoes = new ArrayList<Transicao>();
-        Transicao novaTransicao = new Transicao();
-
-        for (Transicao transicao : automato1.getTransicoes()) {
-            novaTransicao = new Transicao();
-            novaTransicao.setOrigem(transicao.getOrigem() + 1);
-            novaTransicao.setDestino(transicao.getDestino() + 1);
-            novaTransicao.setSimbolo(transicao.getSimbolo());
-            listaTransicoes.add(novaTransicao);
-        }
-
-        for (Transicao transicao : automato2.getTransicoes()) {
-            novaTransicao = new Transicao();
-            novaTransicao.setOrigem(transicao.getOrigem() + 1 + automato2.getEstados().size());
-            novaTransicao.setDestino(transicao.getDestino() + 1 + automato2.getEstados().size());
-            novaTransicao.setSimbolo(transicao.getSimbolo());
-            listaTransicoes.add(novaTransicao);
-        }
-        return listaTransicoes;
     }
 
     /**
@@ -289,7 +254,7 @@ public class Automato {
 
     public boolean isCompletAutomata(){
         //Passo 1: descobri o alfabeto do automato
-        String[] alfabeto = getAlphabet();
+        List<String> alfabeto = getAlfabeto();
 
         //Passo 2: pegar o ID de cada estado
         int[] idDoEstado = pegarIdsDosEstados();
@@ -300,7 +265,7 @@ public class Automato {
         //          estado para recebe tal transição.
 
         // Cada posição do vetor abaixo está associado a um símbolo do alfabeto
-        int[] totalDeTransicoes = new int[alfabeto.length]; 
+        int[] totalDeTransicoes = new int[alfabeto.size()]; 
         //int numeroDeTransicoesDiferentes = 0;
 
         //Seleciona o estado um por um
@@ -311,9 +276,9 @@ public class Automato {
                 //Seleciona as transições correspondente ao estado 
                 if(idDoEstado[i] == transicao.getOrigem()){
                     //Seleciona os símbolos do estado um por um
-                    for(int x = 0; x < alfabeto.length; x++){
+                    for(int x = 0; x < alfabeto.size(); x++){
                         //Se o símbolo da transição for igual ao símbolo do alfabeto
-                        if( transicao.getSimbolo().compareTo(alfabeto[x]) == 0){
+                        if( transicao.getSimbolo().compareTo(alfabeto.get(x)) == 0){
                             //Cada posição do vetor abaixo corresponde a um símbolo do alfabeto
                             totalDeTransicoes[x] += 1;
                         }
@@ -321,7 +286,8 @@ public class Automato {
                 }
             }
 
-            for(int x = 0; x < alfabeto.length; x++){
+            // Verificar o número de transições para cada símbolo do alfabeto 
+            for(int x = 0; x < alfabeto.size(); x++){
                 if (totalDeTransicoes[x] > 1 || totalDeTransicoes[x] == 0) {
                     return false;
                 }
@@ -340,49 +306,6 @@ public class Automato {
         }
 
         return idDoEstado;
-    }
-
-    /**
-     * 
-     * @return um array de  string com os símbolos do alfabeto do autômato
-     */
-    public String[] getAlphabet(){
-        String[] symbols = new String[transicoes.size()];
-
-        int y = 0;
-        // Concatena os símbolos de todas as transições 
-        for(Transicao transition : transicoes){
-            symbols[y] = transition.getSimbolo();
-            y++;
-        }
-
-        String symbol;
-        int numeroDeSimbolos = 0;
-        // Verificar e apaga símbolos repetidos
-        for(int i = 0; i < symbols.length; i++){
-            symbol = symbols[i];
-
-            if(symbol.compareTo("X") != 0){
-                for(int x = i + 1; x < symbols.length; x++){
-                    if(symbol.compareTo(symbols[x]) == 0){
-                        symbols[x] = "X";
-                    }
-                }
-
-                ++numeroDeSimbolos;
-            } 
-        }
-
-        String[] alfabeto = new String[numeroDeSimbolos]; 
-        int x = 0;
-        for(int i = 0; i < symbols.length; i++){
-            if(symbols[i].compareTo("X") != 0){
-                alfabeto[x] = symbols[i];
-                ++x;
-            }
-        }
-        
-        return alfabeto;
     }
 
     public List<Estado> getEstados() {
