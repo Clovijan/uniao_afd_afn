@@ -12,9 +12,14 @@ public class App {
 
         System.out.println("automato");
         impressaoAutomato(automato);
-
-        System.out.println("\nUnião dos dois autômatos: ");
+      
+        System.out.println("\n\nUnião dos dois AFNs: ");
         impressaoAutomato(automato.uniaoAFN(automato, automato2));
+
+        if(automato.isCompletAutomata() && automato2.isCompletAutomata()) {
+            System.out.println("\n\nUnião dos dois AFDs: ");
+            impressaoAutomato(automato.uniaoAFD(automato, automato2));
+        }
 
         System.out.println("\nAlfabeto: ");
         List<String> alfabeto = automato.getAlfabeto();
