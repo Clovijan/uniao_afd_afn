@@ -1,3 +1,6 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.charset.Charset;
 import java.util.List;
 
 public class App {
@@ -16,9 +19,15 @@ public class App {
         System.out.println("\n\nUnião dos dois AFNs: ");
         impressaoAutomato(automato.uniaoAFN(automato, automato2));
 
+        //AutomatoWriter geradorDeArqu = new AutomatoWriter();
+        Automato automato3;
+        FileWriter fileWriter = new FileWriter(new File("uniaoAFD.jff"), Charset.forName("UTF-8"));
+
         if(automato.isCompletAutomata() && automato2.isCompletAutomata()) {
             System.out.println("\n\nUnião dos dois AFDs: ");
-            impressaoAutomato(automato.uniaoAFD(automato, automato2));
+            automato3 = automato.uniaoAFD(automato, automato2);
+            AutomatoWriter.escreveAutomato(automato3, fileWriter);
+            impressaoAutomato(automato3);
         }
 
         System.out.println("\nAlfabeto: ");
