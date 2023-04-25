@@ -16,7 +16,7 @@ public class AutomatoWriter {
         XMLStreamWriter arquivoSaida = XMLOutputFactory.newFactory()
             .createXMLStreamWriter(arquivo);
 
-        arquivoSaida.writeStartDocument("utf-8", "1.0");
+        arquivoSaida.writeStartDocument("UTF-8" ,"1.0");
         arquivoSaida.writeComment("Criado com uniao_afd_afn");
         arquivoSaida.writeStartElement("structure");
 

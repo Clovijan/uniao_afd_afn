@@ -95,6 +95,22 @@ public class Automato {
     }
 
     /**
+     * Recupera o alfabeto do automato
+     *
+     */
+    public List<String> getAlfabeto() {
+        List<String> alfabeto = new ArrayList<String>();
+
+        for (Transicao transicao : transicoes) {
+            if (!alfabeto.contains(transicao.getSimbolo())) {
+                alfabeto.add(transicao.getSimbolo());
+            }
+        }
+        
+        return alfabeto;
+    }
+
+    /**
      * Realiza a União de 2 automatos Finitos não deterministicos
      *
      * @param automato1
@@ -131,8 +147,31 @@ public class Automato {
         return automatoFinal;
     }
 
+    private List<Transicao> reorganizarTransicoes(Automato automato1, Automato automato2) {
+        List<Transicao> listaTransicoes = new ArrayList<Transicao>();
+        Transicao novaTransicao = new Transicao();
+
+        for (Transicao transicao : automato1.getTransicoes()) {
+            novaTransicao = new Transicao();
+            novaTransicao.setOrigem(transicao.getOrigem() + 1);
+            novaTransicao.setDestino(transicao.getDestino() + 1);
+            novaTransicao.setSimbolo(transicao.getSimbolo());
+            listaTransicoes.add(novaTransicao);
+        }
+
+        for (Transicao transicao : automato2.getTransicoes()) {
+            novaTransicao = new Transicao();
+            novaTransicao.setOrigem(transicao.getOrigem() + 1 + automato2.getEstados().size());
+            novaTransicao.setDestino(transicao.getDestino() + 1 + automato2.getEstados().size());
+            novaTransicao.setSimbolo(transicao.getSimbolo());
+            listaTransicoes.add(novaTransicao);
+        }
+        return listaTransicoes;
+    }
+
     /**
-     * Renomeia os estados dos automatos originais
+     * Gera novas transições do novo estado inicial criado para os antigos
+     * estados iniciais dos automatos originais
      *
      * @param automato1
      * @param automato2
@@ -158,28 +197,6 @@ public class Automato {
         }
 
         return listaEstados;
-    }
-
-    private List<Transicao> reorganizarTransicoes(Automato automato1, Automato automato2) {
-        List<Transicao> listaTransicoes = new ArrayList<Transicao>();
-        Transicao novaTransicao = new Transicao();
-
-        for (Transicao transicao : automato1.getTransicoes()) {
-            novaTransicao = new Transicao();
-            novaTransicao.setOrigem(transicao.getOrigem() + 1);
-            novaTransicao.setDestino(transicao.getDestino() + 1);
-            novaTransicao.setSimbolo(transicao.getSimbolo());
-            listaTransicoes.add(novaTransicao);
-        }
-
-        for (Transicao transicao : automato2.getTransicoes()) {
-            novaTransicao = new Transicao();
-            novaTransicao.setOrigem(transicao.getOrigem() + 1 + automato2.getEstados().size());
-            novaTransicao.setDestino(transicao.getDestino() + 1 + automato2.getEstados().size());
-            novaTransicao.setSimbolo(transicao.getSimbolo());
-            listaTransicoes.add(novaTransicao);
-        }
-        return listaTransicoes;
     }
 
     /**
@@ -233,6 +250,62 @@ public class Automato {
         }
 
         return novasTransicoes;
+    }
+
+    public boolean isCompletAutomata(){
+        //Passo 1: descobri o alfabeto do automato
+        List<String> alfabeto = getAlfabeto();
+
+        //Passo 2: pegar o ID de cada estado
+        int[] idDoEstado = pegarIdsDosEstados();
+        
+        // Passo 3: verifica todas as transições de cada estado. É importante ressaltar
+        //          que cada transição possui um ID referente ao estado ao qual está associada.
+        //          Se ele não possui transição com determinado símbolo, então cria-se um
+        //          estado para recebe tal transição.
+
+        // Cada posição do vetor abaixo está associado a um símbolo do alfabeto
+        int[] totalDeTransicoes = new int[alfabeto.size()]; 
+        //int numeroDeTransicoesDiferentes = 0;
+
+        //Seleciona o estado um por um
+        for(int i = 0; i < idDoEstado.length; i++) {
+
+            //Verifica todas as transições
+            for(Transicao transicao : transicoes) {
+                //Seleciona as transições correspondente ao estado 
+                if(idDoEstado[i] == transicao.getOrigem()){
+                    //Seleciona os símbolos do estado um por um
+                    for(int x = 0; x < alfabeto.size(); x++){
+                        //Se o símbolo da transição for igual ao símbolo do alfabeto
+                        if( transicao.getSimbolo().compareTo(alfabeto.get(x)) == 0){
+                            //Cada posição do vetor abaixo corresponde a um símbolo do alfabeto
+                            totalDeTransicoes[x] += 1;
+                        }
+                    }
+                }
+            }
+
+            // Verificar o número de transições para cada símbolo do alfabeto 
+            for(int x = 0; x < alfabeto.size(); x++){
+                if (totalDeTransicoes[x] > 1 || totalDeTransicoes[x] == 0) {
+                    return false;
+                }
+
+                totalDeTransicoes[x] = 0;
+            }
+        }
+        return true;
+    }
+
+    private int[] pegarIdsDosEstados() {
+        int[] idDoEstado = new int[estados.size()];
+        int i = 0;
+        for(Estado estado : estados){
+            idDoEstado[i] = estado.getId();
+        }
+
+        return idDoEstado;
     }
 
     public List<Estado> getEstados() {
