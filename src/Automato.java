@@ -32,12 +32,14 @@ public class Automato {
         Automato automatoFinal = new Automato();
 
         // Adiciona um estado consumidor e suas transições
-        automato2.addEstado(new Estado("d", 0));
-        automato1.addEstado(new Estado("d", 0));
+        if (!automato1.isCompletAutomata() || !automato2.isCompletAutomata()) {
+            automato2.addEstado(new Estado("d", 0));
+            automato1.addEstado(new Estado("d", 0));
 
-        for (String simbolo : getAlfabeto(automato1, automato2)) {
-            automato1.addTransicao(new Transicao(0, 0, simbolo));
-            automato2.addTransicao(new Transicao(0, 0, simbolo));
+            for (String simbolo : getAlfabeto(automato1, automato2)) {
+                automato1.addTransicao(new Transicao(0, 0, simbolo));
+                automato2.addTransicao(new Transicao(0, 0, simbolo));
+            }
         }
 
         // criando o produto cartesiano entre os estados dos automatos originais
@@ -133,7 +135,7 @@ public class Automato {
                 alfabeto.add(transicao.getSimbolo());
             }
         }
-        
+
         return alfabeto;
     }
 
@@ -285,14 +287,14 @@ public class Automato {
 
         //Passo 2: pegar o ID de cada estado
         int[] idDoEstado = pegarIdsDosEstados();
-        
+
         // Passo 3: verifica todas as transições de cada estado. É importante ressaltar
         //          que cada transição possui um ID referente ao estado ao qual está associada.
         //          Se ele não possui transição com determinado símbolo, então cria-se um
         //          estado para recebe tal transição.
 
         // Cada posição do vetor abaixo está associado a um símbolo do alfabeto
-        int[] totalDeTransicoes = new int[alfabeto.size()]; 
+        int[] totalDeTransicoes = new int[alfabeto.size()];
         //int numeroDeTransicoesDiferentes = 0;
 
         //Seleciona o estado um por um
@@ -300,7 +302,7 @@ public class Automato {
 
             //Verifica todas as transições
             for(Transicao transicao : transicoes) {
-                //Seleciona as transições correspondente ao estado 
+                //Seleciona as transições correspondente ao estado
                 if(idDoEstado[i] == transicao.getOrigem()){
                     //Seleciona os símbolos do estado um por um
                     for(int x = 0; x < alfabeto.size(); x++){
@@ -313,7 +315,7 @@ public class Automato {
                 }
             }
 
-            // Verificar o número de transições para cada símbolo do alfabeto 
+            // Verificar o número de transições para cada símbolo do alfabeto
             for(int x = 0; x < alfabeto.size(); x++){
                 if (totalDeTransicoes[x] > 1 || totalDeTransicoes[x] == 0) {
                     return false;
