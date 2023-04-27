@@ -1,11 +1,46 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.charset.Charset;
+import java.util.List;
+
 public class App {
     public static void main(String[] args) throws Exception {
         // Teste de recuperação de dados
 
         Automato automato = new Automato();
-        automato.carregaDados("TesteAFD.jff");
+        Automato automato2 = new Automato();
 
+        automato.carregaDados("TesteAFD.jff");
+        automato2.carregaDados("TesteAFD.jff");
+
+        System.out.println("automato");
         impressaoAutomato(automato);
+      
+        System.out.println("\n\nUnião dos dois AFNs: ");
+        impressaoAutomato(automato.uniaoAFN(automato, automato2));
+
+        //AutomatoWriter geradorDeArqu = new AutomatoWriter();
+        Automato automato3;
+        FileWriter fileWriter = new FileWriter(new File("uniaoAFD.jff"), Charset.forName("UTF-8"));
+
+        if(automato.isCompletAutomata() && automato2.isCompletAutomata()) {
+            System.out.println("\n\nUnião dos dois AFDs: ");
+            automato3 = automato.uniaoAFD(automato, automato2);
+            AutomatoWriter.escreveAutomato(automato3, fileWriter);
+            impressaoAutomato(automato3);
+        }
+
+        System.out.println("\nAlfabeto: ");
+        List<String> alfabeto = automato.getAlfabeto();
+        for(int i = 0; i < alfabeto.size(); i++) {
+            System.out.println((i + 1) + "º: " + alfabeto.get(i));
+        }
+
+        if (automato.isCompletAutomata()) {
+            System.out.println("O autômato é completo!!");
+        } else {
+            System.out.println("O autômato não é completo!!");
+        }
     }
 
     private static void impressaoAutomato(Automato automato) {
