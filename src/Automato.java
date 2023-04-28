@@ -32,14 +32,18 @@ public class Automato {
         Automato automatoFinal = new Automato();
 
         // Adiciona um estado consumidor e suas transições
-        if (!automato1.isCompletAutomata() || !automato2.isCompletAutomata()) {
-            automato2.addEstado(new Estado("d", 0));
+        if (!automato1.isCompletAutomata()) {
             automato1.addEstado(new Estado("d", 0));
 
-            for (String simbolo : getAlfabeto(automato1, automato2)) {
+            for (String simbolo : automato1.getAlfabeto())
                 automato1.addTransicao(new Transicao(0, 0, simbolo));
+        }
+
+        if (!automato2.isCompletAutomata()) {
+            automato2.addEstado(new Estado("d", 0));
+
+            for (String simbolo : automato2.getAlfabeto())
                 automato2.addTransicao(new Transicao(0, 0, simbolo));
-            }
         }
 
         // criando o produto cartesiano entre os estados dos automatos originais
