@@ -11,7 +11,19 @@ public class App {
         Automato automato2 = new Automato();
 
         automato.carregaDados("TesteAFD.jff");
-        automato2.carregaDados("TesteAFD.jff");
+        automato2.carregaDados("TesteAFD2.jff");
+
+        if (automato.isCompletAutomata(automato, automato2)) {
+            System.out.println("O autômato 1 é completo!!");
+        } else {
+            System.out.println("O autômato 1 não é completo!!");
+        }
+
+        if (automato2.isCompletAutomata(automato, automato2)) {
+            System.out.println("O autômato 2 é completo!!");
+        } else {
+            System.out.println("O autômato 2 não é completo!!");
+        }
 
         System.out.println("automato");
         impressaoAutomato(automato);
@@ -23,24 +35,19 @@ public class App {
         Automato automato3;
         FileWriter fileWriter = new FileWriter(new File("uniaoAFD.jff"), Charset.forName("UTF-8"));
 
-        if(automato.isCompletAutomata() && automato2.isCompletAutomata()) {
+        //if(automato.isCompletAutomata() && automato2.isCompletAutomata()) {
             System.out.println("\n\nUnião dos dois AFDs: ");
             automato3 = automato.uniaoAFD(automato, automato2);
             AutomatoWriter.escreveAutomato(automato3, fileWriter);
             impressaoAutomato(automato3);
-        }
+        //}
 
         System.out.println("\nAlfabeto: ");
-        List<String> alfabeto = automato.getAlfabeto();
+        List<String> alfabeto = automato.getAlfabeto(automato, automato2);
         for(int i = 0; i < alfabeto.size(); i++) {
             System.out.println((i + 1) + "º: " + alfabeto.get(i));
         }
 
-        if (automato.isCompletAutomata()) {
-            System.out.println("O autômato é completo!!");
-        } else {
-            System.out.println("O autômato não é completo!!");
-        }
     }
 
     private static void impressaoAutomato(Automato automato) {
