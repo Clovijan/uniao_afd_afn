@@ -31,13 +31,28 @@ public class Automato {
     public Automato uniaoAFD(Automato automato1, Automato automato2) {
         Automato automatoFinal = new Automato();
 
+        // Adiciona um estado consumidor e suas transições
+        if (!automato1.isCompletAutomata()) {
+            automato1.addEstado(new Estado("d", 0));
+
+            for (String simbolo : automato1.getAlfabeto())
+                automato1.addTransicao(new Transicao(0, 0, simbolo));
+        }
+
+        if (!automato2.isCompletAutomata()) {
+            automato2.addEstado(new Estado("d", 0));
+
+            for (String simbolo : automato2.getAlfabeto())
+                automato2.addTransicao(new Transicao(0, 0, simbolo));
+        }
+
         // criando o produto cartesiano entre os estados dos automatos originais
+        int idEstado = 0;
         for (Estado estado1 : automato1.getEstados()) {
             for (Estado estado2 : automato2.getEstados()) {
-                Estado novoEstado = new Estado((estado1.getNome() + "_" + estado2.getNome()),
-                        (estado1.getId() * automato2.getEstados().size() + estado2.getId()));
-                novoEstado.setInicial(estado1.isInicial() && estado2.isInicial() ? true : false);
-                novoEstado.setFinal(estado1.isFinal() || estado2.isFinal() ? true : false);
+                Estado novoEstado = new Estado(estado1.getNome() + estado2.getNome(), idEstado++);
+                novoEstado.setInicial(estado1.isInicial() && estado2.isInicial());
+                novoEstado.setFinal(estado1.isFinal() || estado2.isFinal());
                 automatoFinal.addEstado(novoEstado);
             }
         }
@@ -46,16 +61,20 @@ public class Automato {
         for (Estado estado1 : automato1.getEstados()) {
             for (Estado estado2 : automato2.getEstados()) {
                 for (String simbolo : getAlfabeto(automato1, automato2)) {
-                    Transicao novaTransicao = new Transicao();
-                    int transicaoOrigem = estado1.getId() * automato2.getEstados().size() + estado2.getId();
-                    int idEstado1 = getIdEstadoBySimbolo(estado1, simbolo, automato1.getTransicoes());
-                    int idEstado2 = getIdEstadoBySimbolo(estado2, simbolo, automato2.getTransicoes());
-                    int transicaoDestino = idEstado1 * automato2.getEstados().size() + idEstado2;
+                    Estado destino1 = automato1.getProximoEstado(estado1, simbolo);
+                    Estado destino2 = automato2.getProximoEstado(estado2, simbolo);
 
-                    novaTransicao.setOrigem(transicaoOrigem);
-                    novaTransicao.setDestino(transicaoDestino);
-                    novaTransicao.setSimbolo(simbolo);
-                    automatoFinal.addTransicao(novaTransicao);
+                    if (destino1 == null)
+                        destino1 = new Estado("d", 0);
+                    if (destino2 == null)
+                        destino2 = new Estado("d", 0);
+
+                    automatoFinal.addTransicao(
+                        new Transicao(automatoFinal.getIdEstadoPorNome(
+                                          estado1.getNome() + estado2.getNome()),
+                                      automatoFinal.getIdEstadoPorNome(
+                                          destino1.getNome() + destino2.getNome()),
+                                      simbolo));
                 }
             }
         }
@@ -63,12 +82,26 @@ public class Automato {
         return automatoFinal;
     }
 
-    private int getIdEstadoBySimbolo(Estado estado, String simbolo, List<Transicao> trasicoesAutomato) {
-        for (Transicao transicao : trasicoesAutomato) {
-            if (transicao.getOrigem() == estado.getId() && transicao.getSimbolo().equals(simbolo))
-                return transicao.getDestino();
-        }
+    private int getIdEstadoPorNome(String nome) {
+        for (Estado estado : estados)
+            if (estado.getNome().equals(nome))
+                return estado.getId();
+
         return -1;
+    }
+
+    private Estado getProximoEstado(Estado origem, String simbolo) {
+        for (Transicao transicao : this.transicoes) {
+            if (transicao.getOrigem() != origem.getId()
+                    || !transicao.getSimbolo().equals(simbolo))
+                continue;
+
+            for (Estado estado : this.estados)
+                if (estado.getId() == transicao.getDestino())
+                    return estado;
+        }
+
+        return null;
     }
 
     /**
@@ -106,7 +139,7 @@ public class Automato {
                 alfabeto.add(transicao.getSimbolo());
             }
         }
-        
+
         return alfabeto;
     }
 
@@ -258,14 +291,14 @@ public class Automato {
 
         //Passo 2: pegar o ID de cada estado
         int[] idDoEstado = pegarIdsDosEstados();
-        
+
         // Passo 3: verifica todas as transições de cada estado. É importante ressaltar
         //          que cada transição possui um ID referente ao estado ao qual está associada.
         //          Se ele não possui transição com determinado símbolo, então cria-se um
         //          estado para recebe tal transição.
 
         // Cada posição do vetor abaixo está associado a um símbolo do alfabeto
-        int[] totalDeTransicoes = new int[alfabeto.size()]; 
+        int[] totalDeTransicoes = new int[alfabeto.size()];
         //int numeroDeTransicoesDiferentes = 0;
 
         //Seleciona o estado um por um
@@ -273,7 +306,7 @@ public class Automato {
 
             //Verifica todas as transições
             for(Transicao transicao : transicoes) {
-                //Seleciona as transições correspondente ao estado 
+                //Seleciona as transições correspondente ao estado
                 if(idDoEstado[i] == transicao.getOrigem()){
                     //Seleciona os símbolos do estado um por um
                     for(int x = 0; x < alfabeto.size(); x++){
@@ -286,7 +319,7 @@ public class Automato {
                 }
             }
 
-            // Verificar o número de transições para cada símbolo do alfabeto 
+            // Verificar o número de transições para cada símbolo do alfabeto
             for(int x = 0; x < alfabeto.size(); x++){
                 if (totalDeTransicoes[x] > 1 || totalDeTransicoes[x] == 0) {
                     return false;

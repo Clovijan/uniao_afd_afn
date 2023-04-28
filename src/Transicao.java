@@ -6,6 +6,23 @@ public class Transicao {
     // vazia, ou seja, uma transição lambda.
     private String simbolo = ""; // read
 
+    Transicao() {}
+
+    Transicao(int origem) {
+        this.origem = origem;
+    }
+
+    Transicao(int origem, int destino) {
+        this.origem = origem;
+        this.destino = destino;
+    }
+
+    Transicao(int origem, int destino, String simbolo) {
+        this.origem = origem;
+        this.destino = destino;
+        this.simbolo = simbolo;
+    }
+
     public int getOrigem() {
         return this.origem;
     }
