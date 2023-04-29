@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -25,22 +26,32 @@ public class App {
             System.out.println("O autômato 2 não é completo!!");
         }
 
-        System.out.println("automato");
+        System.out.println("automato 1:");
         impressaoAutomato(automato);
-      
-        System.out.println("\n\nUnião dos dois AFNs: ");
-        impressaoAutomato(automato.uniaoAFN(automato, automato2));
 
-        //AutomatoWriter geradorDeArqu = new AutomatoWriter();
+        System.out.println("automato 2:");
+        impressaoAutomato(automato);
+        
         Automato automato3;
-        FileWriter fileWriter = new FileWriter(new File("uniaoAFD.jff"), Charset.forName("UTF-8"));
 
-        //if(automato.isCompletAutomata() && automato2.isCompletAutomata()) {
+        Scanner scan = new Scanner(System.in);
+
+        System.out.print("Operação em AFNs (1) ou em AFDs (2)? ");
+        if(scan.nextInt() == 1){
+            System.out.println("\n\nUnião dos dois AFNs: ");
+            automato3 = automato.uniaoAFN(automato, automato2);
+            impressaoAutomato(automato3);
+            FileWriter fileWriterAFN = new FileWriter(new File("uniaoAFN.jff"), Charset.forName("UTF-8"));
+            AutomatoWriter.escreveAutomato(automato3, fileWriterAFN);
+        } else{
             System.out.println("\n\nUnião dos dois AFDs: ");
             automato3 = automato.uniaoAFD(automato, automato2);
-            AutomatoWriter.escreveAutomato(automato3, fileWriter);
             impressaoAutomato(automato3);
-        //}
+            FileWriter fileWriterAFD = new FileWriter(new File("uniaoAFD.jff"), Charset.forName("UTF-8"));
+            AutomatoWriter.escreveAutomato(automato3, fileWriterAFD);
+        }
+
+        scan.close();
 
         System.out.println("\nAlfabeto: ");
         List<String> alfabeto = automato.getAlfabeto(automato, automato2);
