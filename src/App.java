@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -11,36 +12,53 @@ public class App {
         Automato automato2 = new Automato();
 
         automato.carregaDados("TesteAFD.jff");
-        automato2.carregaDados("TesteAFD.jff");
+        automato2.carregaDados("TesteAFD2.jff");
 
-        System.out.println("automato");
-        impressaoAutomato(automato);
-      
-        System.out.println("\n\nUnião dos dois AFNs: ");
-        impressaoAutomato(automato.uniaoAFN(automato, automato2));
-
-        //AutomatoWriter geradorDeArqu = new AutomatoWriter();
-        Automato automato3;
-        FileWriter fileWriter = new FileWriter(new File("uniaoAFD.jff"), Charset.forName("UTF-8"));
-
-        if(automato.isCompletAutomata() && automato2.isCompletAutomata()) {
-            System.out.println("\n\nUnião dos dois AFDs: ");
-            automato3 = automato.uniaoAFD(automato, automato2);
-            AutomatoWriter.escreveAutomato(automato3, fileWriter);
-            impressaoAutomato(automato3);
+        if (automato.isCompletAutomata(automato, automato2)) {
+            System.out.println("O autômato 1 é completo!!");
+        } else {
+            System.out.println("O autômato 1 não é completo!!");
         }
 
+        if (automato2.isCompletAutomata(automato, automato2)) {
+            System.out.println("O autômato 2 é completo!!");
+        } else {
+            System.out.println("O autômato 2 não é completo!!");
+        }
+
+        System.out.println("automato 1:");
+        impressaoAutomato(automato);
+
+        System.out.println("automato 2:");
+        impressaoAutomato(automato);
+        
+        Automato automato3;
+
+        Scanner scan = new Scanner(System.in);
+
+        System.out.print("Operação em AFNs (1) ou em AFDs (2)? ");
+        if(scan.nextInt() == 1){
+            System.out.println("\n\nUnião dos dois AFNs: ");
+            automato3 = automato.uniaoAFN(automato, automato2);
+            impressaoAutomato(automato3);
+            FileWriter fileWriterAFN = new FileWriter(new File("uniaoAFN.jff"), Charset.forName("UTF-8"));
+            AutomatoWriter.escreveAutomato(automato3, fileWriterAFN);
+        } else{
+            System.out.println("\n\nUnião dos dois AFDs: ");
+            automato3 = automato.uniaoAFD(automato, automato2);
+            impressaoAutomato(automato3);
+            FileWriter fileWriterAFD = new FileWriter(new File("uniaoAFD.jff"), Charset.forName("UTF-8"));
+            AutomatoWriter.escreveAutomato(automato3, fileWriterAFD);
+        }
+
+        scan.close();
+
         System.out.println("\nAlfabeto: ");
-        List<String> alfabeto = automato.getAlfabeto();
+        List<String> alfabeto = automato.getAlfabeto(automato, automato2);
         for(int i = 0; i < alfabeto.size(); i++) {
             System.out.println((i + 1) + "º: " + alfabeto.get(i));
         }
 
-        if (automato.isCompletAutomata()) {
-            System.out.println("O autômato é completo!!");
-        } else {
-            System.out.println("O autômato não é completo!!");
-        }
     }
 
     private static void impressaoAutomato(Automato automato) {

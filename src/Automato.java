@@ -32,17 +32,17 @@ public class Automato {
         Automato automatoFinal = new Automato();
 
         // Adiciona um estado consumidor e suas transições
-        if (!automato1.isCompletAutomata()) {
+        if (!automato1.isCompletAutomata(automato1, automato2)) {
             automato1.addEstado(new Estado("d", 0));
 
-            for (String simbolo : automato1.getAlfabeto())
+            for (String simbolo : automato1.getAlfabeto(automato1, automato2))
                 automato1.addTransicao(new Transicao(0, 0, simbolo));
         }
 
-        if (!automato2.isCompletAutomata()) {
+        if (!automato2.isCompletAutomata(automato1, automato2)) {
             automato2.addEstado(new Estado("d", 0));
 
-            for (String simbolo : automato2.getAlfabeto())
+            for (String simbolo : automato2.getAlfabeto(automato1, automato2))
                 automato2.addTransicao(new Transicao(0, 0, simbolo));
         }
 
@@ -111,7 +111,7 @@ public class Automato {
      * @param automato2
      *
      */
-    private List<String> getAlfabeto(Automato automato1, Automato automato2) {
+    public List<String> getAlfabeto(Automato automato1, Automato automato2) {
         List<String> alfabeto = new ArrayList<String>();
 
         for (Transicao transicao : automato1.getTransicoes()) {
@@ -124,22 +124,6 @@ public class Automato {
                 alfabeto.add(transicao.getSimbolo());
             }
         }
-        return alfabeto;
-    }
-
-    /**
-     * Recupera o alfabeto do automato
-     *
-     */
-    public List<String> getAlfabeto() {
-        List<String> alfabeto = new ArrayList<String>();
-
-        for (Transicao transicao : transicoes) {
-            if (!alfabeto.contains(transicao.getSimbolo())) {
-                alfabeto.add(transicao.getSimbolo());
-            }
-        }
-
         return alfabeto;
     }
 
@@ -285,9 +269,9 @@ public class Automato {
         return novasTransicoes;
     }
 
-    public boolean isCompletAutomata(){
+    public boolean isCompletAutomata(Automato automato1, Automato automato2){
         //Passo 1: descobri o alfabeto do automato
-        List<String> alfabeto = getAlfabeto();
+        List<String> alfabeto = getAlfabeto(automato1, automato2);
 
         //Passo 2: pegar o ID de cada estado
         int[] idDoEstado = pegarIdsDosEstados();
