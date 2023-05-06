@@ -354,4 +354,25 @@ public class Automato {
 
         return estados;
     }
+
+    /**
+     * Verifica se o automato é deterministico ou não, baseado nas transições.
+     * @param automato
+     * @return booleano caso o automato seja deterministico.
+     */
+    public boolean verificaSeAutomatoDeterministico(Automato automato) {
+        for (int i = 0; i < automato.getTransicoes().size(); i++) {
+            Transicao transicao = automato.getTransicoes().get(i);
+
+            for (int j = i + 1; j < automato.getTransicoes().size(); j++) {
+                Transicao outraTransicao = automato.getTransicoes().get(j);
+
+                if (transicao.getOrigem() == outraTransicao.getOrigem()
+                        && transicao.getSimbolo().equals(outraTransicao.getSimbolo())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
