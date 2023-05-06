@@ -153,28 +153,7 @@ public class Automato {
 
         return automatoFinal;
     }
-
-    public Automato uniaoAFN2(Automato automato1, Automato automato2) {
-        Automato automatoFinal = new Automato();
-
-        // criando novo estado incial e setando no automato final
-        Estado novoEstado = new Estado("q0", 0);
-        novoEstado.setInicial(true);
-        novoEstado.setFinal(false);
-        automatoFinal.addEstado(novoEstado);
-
-        // Gerando transicao do novo estado inicial criado, para os antigos inicias do
-        // automatos originais
-        automatoFinal.addAllTransicao(geraTransicoesNovoEstadoInicial(automato1, automato2));
-
-        // renomeia e adiciona os estados no automato final
-        automatoFinal.addAllEstados(renomeiaEstados(automato1, automato2));
-
-        automatoFinal.addAllTransicao(reorganizarTransicoes(automato1, automato2));
-
-        return automatoFinal;
-    }
-
+    
     private List<Transicao> reorganizarTransicoes(Automato automato1, Automato automato2) {
         List<Transicao> listaTransicoes = new ArrayList<Transicao>();
         Transicao novaTransicao = new Transicao();
