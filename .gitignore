@@ -4,3 +4,6 @@
 # Ignora o diretório dos binários
 bin/
 
+# Ignora os arquivos do JFLAP
+*.jff
+
